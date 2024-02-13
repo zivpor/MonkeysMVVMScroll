@@ -10,10 +10,12 @@ using System.Windows.Input;
 
 namespace MonkeysMVVM.ViewModels
 {
-    public class MonkeysPageViewModel
+    public class MonkeysPageViewModel:ViewModel
     {
+        private bool isRefreshing;
         public ObservableCollection<Monkey> Monkeys { get; set; }
         public ICommand LoadMonkeysCommand {  get; set; }
+        public bool IsRefreshing { get => isRefreshing; set { isRefreshing = value; OnPropertyChanged(); } }
         public MonkeysPageViewModel() 
         {
             Monkeys = new ObservableCollection<Monkey>();
@@ -21,6 +23,7 @@ namespace MonkeysMVVM.ViewModels
         }
         public async Task LoadMonkeys()
         {
+            IsRefreshing= true;
             MonkeysService service = new MonkeysService();
             var list = await service.GetMonkeys();
             Monkeys.Clear();
@@ -28,7 +31,7 @@ namespace MonkeysMVVM.ViewModels
             {
                 Monkeys.Add(monkey);
             }
-
+            IsRefreshing = false;
         }
     }
 }
