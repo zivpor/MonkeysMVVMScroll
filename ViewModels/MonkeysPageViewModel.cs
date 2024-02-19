@@ -1,4 +1,5 @@
-﻿using MonkeysMVVM.Models;
+﻿using CoreML;
+using MonkeysMVVM.Models;
 using MonkeysMVVM.Services;
 using System;
 using System.Collections.Generic;
@@ -15,13 +16,15 @@ namespace MonkeysMVVM.ViewModels
         private bool isRefreshing;
         public ObservableCollection<Monkey> Monkeys { get; set; }
         public ICommand LoadMonkeysCommand {  get; set; }
+        public ICommand NaviagteToShowMonkey {  get; set; }
         public bool IsRefreshing { get => isRefreshing; set { isRefreshing = value; OnPropertyChanged(); } }
         public MonkeysPageViewModel() 
         {
             Monkeys = new ObservableCollection<Monkey>();
             LoadMonkeysCommand = new Command(async () => await LoadMonkeys());
+            NaviagteToShowMonkey = new Command(async () => await GoToMonkeyPage());
         }
-        public async Task LoadMonkeys()
+        private async Task LoadMonkeys()
         {
             IsRefreshing= true;
             MonkeysService service = new MonkeysService();
@@ -32,6 +35,10 @@ namespace MonkeysMVVM.ViewModels
                 Monkeys.Add(monkey);
             }
             IsRefreshing = false;
+        }
+        private async Task GoToMonkeyPage()
+        {
+            await AppShell.Current.GoToAsync("Show monkey");
         }
     }
 }
